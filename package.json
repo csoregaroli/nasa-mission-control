@@ -1,0 +1,26 @@
+{
+  "name": "nasa-mission-control",
+  "version": "1.0.0",
+  "description": "Node.js tutorial project",
+  "main": "index.js",
+  "scripts": {
+    "install-server": "npm install --prefix server",
+    "install-client": "npm install --prefix client",
+    "install": "npm run install-server && npm run install-client",
+    "server": "npm run watch --prefix server",
+    "client": "npm start --prefix client",
+    "watch": "npm run server & npm run client",
+    "test": "npm run test --prefix server && npm run test --prefix client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csoregaroli/nasa-mission-control.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/csoregaroli/nasa-mission-control/issues"
+  },
+  "homepage": "https://github.com/csoregaroli/nasa-mission-control#readme"
+}
