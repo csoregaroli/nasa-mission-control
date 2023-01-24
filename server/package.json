@@ -7,7 +7,8 @@
     "test": "jest --no-watchman",
     "test-watch": "jest --watch --no-watchman",
     "watch": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "cluster": "pm2 start src/server.js -i max"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "csv-parse": "^5.3.3",
     "express": "^4.18.2",
     "morgan": "^1.10.0",
+    "pm2": "^5.2.2",
     "supertest": "^6.3.3"
   },
   "devDependencies": {
