@@ -23,6 +23,8 @@ mongoose.connection.on('error', (err) => {
   console.error(err)
 })
 
+mongoose.set('strictQuery', false)
+
 async function startServer() {
   mongoose.connect(MONGO_URL)
   await loadPlanetsData()
