@@ -28,3 +28,6 @@ const launchesSchema = new mongoose.Schema({
     required: true,
   },
 })
+
+// Connects launchesSchema with "launches" collection
+module.exports = mongoose.model('Launch', launchesSchema)
