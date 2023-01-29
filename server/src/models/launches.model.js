@@ -21,11 +21,12 @@ saveLaunch(launch)
 // SpaceX API functions
 const SPACEX_API_URL = 'https://api.spacexdata.com/v4/launches/query'
 
-async function loadLaunchData() {
+async function populateLaunches() {
   console.log('Downloading launch data...')
   const response = await axios.post(SPACEX_API_URL, {
     query: {},
     options: {
+      pagination: false,
       populate: [
         { path: 'rocket', select: { name: 1 } },
         { path: 'payloads', select: { customers: 1 } },
@@ -51,16 +52,35 @@ async function loadLaunchData() {
     }
 
     console.log(`${launch.flightNumber} ${launch.mission}`)
+
+    // Populate launches collection
+  }
+}
+
+async function loadLaunchData() {
+  const firstSpaceXLaunch = await findLaunch({
+    flightNumber: 1,
+    rocket: 'Falcon 1',
+    mission: 'FalconSat',
+  })
+  if (firstSpaceXLaunch) {
+    console.log('Launch data already loaded')
+  } else {
+    await populateLaunches()
   }
 }
 
 // General launch functions
-async function existsLaunchWithId(launchId) {
-  return await launchesDatabase.findOne({
-    flightNumber: launchId,
-  })
+async function findLaunch(filter) {
+  return await launchesDatabase.findOne(filter)
 }
 
+// Check if a launch exists
+async function existsLaunchWithId(launchId) {
+  return await findLaunch({ flightNumber: launchId })
+}
+
+// Get flight_number of last flight added to db
 async function getLatestFlightNumber() {
   //"-flightNumber" means it sorts desc
   const latestLaunch = await launchesDatabase.findOne().sort('-flightNumber')
@@ -72,10 +92,12 @@ async function getLatestFlightNumber() {
   return latestLaunch.flightNumber
 }
 
+// Returns all launches in db
 async function getAllLaunches() {
   return await launchesDatabase.find({}, { _id: 0, __v: 0 })
 }
 
+// Saves new launch to db
 async function saveLaunch(launch) {
   const planet = await planets.findOne({
     keplerName: launch.target,
@@ -96,6 +118,7 @@ async function saveLaunch(launch) {
   )
 }
 
+// Creates a new launch
 async function scheduleNewLaunch(launch) {
   const newFlightNumber = (await getLatestFlightNumber()) + 1
 
@@ -109,6 +132,7 @@ async function scheduleNewLaunch(launch) {
   await saveLaunch(newLaunch)
 }
 
+// Updates launch upcoming + success fields in db
 async function abortLaunchById(launchId) {
   const aborted = await launchesDatabase.updateOne(
     {
