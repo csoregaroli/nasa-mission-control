@@ -18,6 +18,7 @@ const launch = {
 
 saveLaunch(launch)
 
+// SpaceX API functions
 const SPACEX_API_URL = 'https://api.spacexdata.com/v4/launches/query'
 
 async function loadLaunchData() {
@@ -31,8 +32,29 @@ async function loadLaunchData() {
       ],
     },
   })
+
+  const launchDocs = response.data.docs
+  for (const launchDoc of launchDocs) {
+    const payloads = launchDoc['payloads']
+    const customers = payloads.flatMap((payload) => {
+      return payload['customers']
+    })
+
+    const launch = {
+      flightNumber: launchDoc['flight_number'],
+      mission: launchDoc['name'],
+      rocket: launchDoc['rocket']['name'],
+      launchDate: launchDoc['date_local'],
+      upcoming: launchDoc['upcoming'],
+      success: launchDoc['success'],
+      customers,
+    }
+
+    console.log(`${launch.flightNumber} ${launch.mission}`)
+  }
 }
 
+// General launch functions
 async function existsLaunchWithId(launchId) {
   return await launchesDatabase.findOne({
     flightNumber: launchId,
