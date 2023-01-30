@@ -99,8 +99,11 @@ async function getLatestFlightNumber() {
 }
 
 // Returns all launches in db
-async function getAllLaunches() {
-  return await launchesDatabase.find({}, { _id: 0, __v: 0 })
+async function getAllLaunches(skip, limit) {
+  return await launchesDatabase
+    .find({}, { _id: 0, __v: 0 })
+    .skip(skip)
+    .limit(limit)
 }
 
 // Saves new launch to db
